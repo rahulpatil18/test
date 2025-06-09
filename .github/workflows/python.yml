@@ -34,4 +34,4 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-          PYTHONPATH=. poetry run pytest
+           PYTHONPATH=${{ github.workspace }} poetry run pytest
