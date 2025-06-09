@@ -1,4 +1,4 @@
-name: Test Python
+name: Run Python Tests with Poetry
 
 on:
   workflow_dispatch:
@@ -10,8 +10,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -24,14 +25,11 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Configure Poetry
+      - name: Configure Poetry and install dependencies
         run: |
-          poetry config virtualenvs.create false
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
 
-      - name: Install dependencies with Poetry
+      - name: Run pytest
         run: |
-          poetry install --no-interaction --no-root
-
-      - name: Run tests with pytest
-        run: |
-           PYTHONPATH=${{ github.workspace }} poetry run pytest
+          poetry run pytest
