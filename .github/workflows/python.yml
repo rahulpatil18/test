@@ -1,35 +1,98 @@
-name: Run Python Tests with Poetry
+# name: Run Python Tests with Poetry
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       image_tag:
+#         description: 'Docker image tag or SHA to deploy (e.g. v1.2.3 or sha256:abc...)'
+#         required: true
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v3
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.10'
+
+#       - name: Install Poetry
+#         run: |
+#           curl -sSL https://install.python-poetry.org | python3 -
+#           echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+#       - name: Configure Poetry and install dependencies
+#         run: |
+#           poetry config virtualenvs.in-project true
+#           poetry install --no-interaction
+
+#       - name: Run pytest
+#         run: |
+#           poetry run pytest
+
+name: Run Python Tests Conditionally
 
 on:
-  workflow_dispatch:
-    inputs:
-      image_tag:
-        description: 'Docker image tag or SHA to deploy (e.g. v1.2.3 or sha256:abc...)'
-        required: true
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
+  check-if-tests-needed:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.run-tests }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            run-tests:
+              - 'pyproject.toml'
+              - 'poetry.lock'
+              - '**/*.py'
+              - 'tests/**'
+
   test:
+    needs: check-if-tests-needed
+    if: needs.check-if-tests-needed.outputs.should_run == 'true'
     runs-on: ubuntu-latest
 
+    env:
+      PYTHON_VERSION: 3.11
+      POETRY_VERSION: 1.8.2
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install Poetry
+      - name: Install pipx + poetry
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+          python -m pip install --user pipx
+          python -m pipx ensurepath
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          pipx install poetry==${{ env.POETRY_VERSION }}
 
-      - name: Configure Poetry and install dependencies
-        run: |
-          poetry config virtualenvs.in-project true
-          poetry install --no-interaction
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-
 
-      - name: Run pytest
+      - name: Run tests using Makefile
         run: |
-          poetry run pytest
+          make setup-poetry-env
+          make tests
