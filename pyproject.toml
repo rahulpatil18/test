@@ -2,11 +2,9 @@
 name = "test-poetry-pytest"
 version = "0.1.0"
 description = ""
-packages = [{ include = "app" }]
 authors = ["Your Name <you@example.com>"]
-packages = [
-  { include = "mathutils" }
-]
+packages = [{ include = "mathutils" }]
+
 [tool.poetry.dependencies]
 python = "^3.11"
 
