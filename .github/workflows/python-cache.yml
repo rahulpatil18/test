@@ -37,6 +37,15 @@ jobs:
       - name: Add Poetry to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Verify Poetry version
+        run: poetry --version
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+
       - name: Restore Poetry virtualenv from cache
         id: poetry-cache
         uses: actions/cache@v4
@@ -45,7 +54,7 @@ jobs:
           key: venv-${{ hashFiles('**/poetry.lock') }}
 
       - name: Log Cache Info
-        run: 'echo "Cache hit: ${{ steps.poetry-cache.outputs.cache-hit }}"'
+        run: echo "Cache hit: ${{ steps.poetry-cache.outputs.cache-hit }}"
 
       - name: Install dependencies (only if no cache)
         if: steps.poetry-cache.outputs.cache-hit != 'true'
