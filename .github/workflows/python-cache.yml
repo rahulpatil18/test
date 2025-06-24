@@ -46,12 +46,13 @@ jobs:
           path: ~/.cache/pip
           key: pip-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
+
       - name: Restore Poetry virtualenv from cache
         id: poetry-cache
         uses: actions/cache@v4
         with:
           path: .venv
-          key: venv-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Log Cache Info
         run: 'echo "Cache hit: ${{ steps.poetry-cache.outputs.cache-hit }}"'
