@@ -1,0 +1,52 @@
+name: Reusable Python Test Workflow
+
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        description: 'Python version to use'
+        required: false
+        default: '3.11'
+        type: string
+      poetry_version:
+        description: 'Poetry version to install'
+        required: false
+        default: '1.8.2'
+        type: string
+      checkout_ref:
+        description: 'Branch, tag, or commit to checkout'
+        required: false
+        type: string
+
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      PYTHON_VERSION: ${{ inputs.python_version }}
+      POETRY_VERSION: ${{ inputs.poetry_version }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.checkout_ref || github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure Poetry and install dependencies
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Run pytest
+        run: |
+          poetry run pytest
