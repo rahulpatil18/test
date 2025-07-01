@@ -1,0 +1,56 @@
+name: Test build-args
+on:
+  workflow_dispatch:
+
+env:
+    DUPLO_HOST: https://qa-aws.duplocloud.net/
+    DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+    SERVICE_NAME: web
+    DUPLO_TENANT: demo
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Retrieve Duplo Token
+              run: |
+                echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
+
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Duplo Setup
+              uses: duplocloud/actions/setup@v0.0.5
+
+            - name: Build and Push Docker Image
+              uses: duplocloud/actions/build-image@v0.0.5
+              id: build-and-push-backend
+              with:
+                  repo: ${{ env.SERVICE_NAME }}
+                  platforms: linux/amd64
+                  push: true
+                  cache: false
+                  extra-tags: ${{ github.sha }}
+                  build-args: >
+                    --build-arg BUNDLE_ENTERPRISE__CONTRIBSYS__COM=${{ secrets.BUNDLE_ENTERPRISE__CONTRIBSYS__COM }}
+
+        outputs:
+            backend_image: '${{ steps.build-and-push-backend.outputs.image }}:${{ github.sha }}'
+    deploy:
+        runs-on: ubuntu-latest
+        needs:
+            - build
+        environment: development
+        steps:
+            - name: Retrieve Duplo Token
+              run: |
+                echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
+
+            - name: Duplo Setup
+              uses: duplocloud/actions/setup@v0.0.5
+
+            - name: Update backend Service
+              uses: duplocloud/actions/update-image@v0.0.5
+              with:
+                  name: ${{ env.SERVICE_NAME }}
+                  image: ${{ needs.build.outputs.backend_image }}
+                  type: service
