@@ -30,7 +30,7 @@ jobs:
         uses: duplocloud/actions/build-image@v0.0.5
         id: build-and-push-backend
         with:
-            repo: ${{ env.SERVICE_NAME }}
+            repo: web
             platforms: linux/amd64
             push: true
             cache: true
