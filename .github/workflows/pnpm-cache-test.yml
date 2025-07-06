@@ -32,7 +32,6 @@ jobs:
         with:
             repo: web
             platforms: linux/amd64
-            push: true
-            cache: true
+            cache: false
             context: dummy-frontend
             extra-tags: ${{ github.sha }}
