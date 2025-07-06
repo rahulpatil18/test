@@ -1,10 +1,7 @@
 name: Test pnpm Cache
 
 on:
-  push:
-    paths:
-      - 'dummy-frontend/**'
-      - '.github/workflows/pnpm-cache-test.yml'
+  workflow_dispatch:
 
 jobs:
   pnpm_cache_test:
