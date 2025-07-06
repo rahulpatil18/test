@@ -13,18 +13,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js & pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 8.15.3
-
-      - name: Setup Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-          cache-dependency-path: dummy-frontend/pnpm-lock.yaml
-
       - name: Restore pnpm store cache
         uses: actions/cache@v3
         with:
@@ -33,6 +21,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: Install deps with pnpm
-        working-directory: dummy-frontend
-        run: pnpm install
+      - name: Build Docker image with mounted cache
+        run: |
+          docker build \
+            --build-arg NODE_ENV=development \
+            --build-context store=type=local,src=$HOME/.pnpm-store \
+            --progress=plain \
+            --file dummy-frontend/Dockerfile \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --build-arg STORE_PATH=/root/.pnpm-store \
+            --build-arg PNPM_HOME=/root/.pnpm-store \
+            --output type=docker \
+            dummy-frontend
+        env:
+          DOCKER_BUILDKIT: 1
