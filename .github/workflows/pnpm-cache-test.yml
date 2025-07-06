@@ -33,6 +33,6 @@ jobs:
             repo: ${{ env.SERVICE_NAME }}
             platforms: linux/amd64
             push: true
-            cache: false
+            cache: true
             context: dummy-frontend
             extra-tags: ${{ github.sha }}
