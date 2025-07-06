@@ -2,6 +2,11 @@ name: Test pnpm Cache
 
 on:
   workflow_dispatch:
+env:
+  DUPLO_HOST: https://qa-aws.duplocloud.net/
+  DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+  SERVICE_NAME: web
+  DUPLO_TENANT: demo
 
 jobs:
   pnpm_cache_test:
@@ -21,17 +26,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: Build Docker image with mounted cache
-        run: |
-          docker build \
-            --build-arg NODE_ENV=development \
-            --build-context store=type=local,src=$HOME/.pnpm-store \
-            --progress=plain \
-            --file dummy-frontend/Dockerfile \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --build-arg STORE_PATH=/root/.pnpm-store \
-            --build-arg PNPM_HOME=/root/.pnpm-store \
-            --output type=docker \
-            dummy-frontend
-        env:
-          DOCKER_BUILDKIT: 1
+      - name: Build and Push Docker Image
+        uses: duplocloud/actions/build-image@v0.0.5
+        id: build-and-push-backend
+        with:
+            repo: ${{ env.SERVICE_NAME }}
+            platforms: linux/amd64
+            push: true
+            cache: false
+            context: dummy-frontend
+            extra-tags: ${{ github.sha }}
