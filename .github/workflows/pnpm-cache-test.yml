@@ -18,6 +18,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Retrieve Duplo Token
+        run: echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Duplo Setup
+        uses: duplocloud/actions/setup@v0.0.10
+
       - name: Restore pnpm store cache
         uses: actions/cache@v3
         with:
@@ -27,7 +33,7 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       - name: Build and Push Docker Image
-        uses: duplocloud/actions/build-image@v0.0.5
+        uses: duplocloud/actions/build-image@v0.0.10
         id: build-and-push-backend
         with:
           repo: ${{ env.SERVICE_NAME }}
