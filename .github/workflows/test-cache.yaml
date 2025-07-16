@@ -1,0 +1,37 @@
+name: Test Duplo Cache on web(demo)
+on: 
+  workflow_dispatch:
+
+env:
+    DUPLO_HOST: https://qa-aws.duplocloud.net
+    DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+    SERVICE_NAME: web
+    DUPLO_TENANT: demo
+jobs:
+    build:
+        runs-on: blacksmith-4vcpu-ubuntu-2204
+        steps:
+            - name: Retrieve Duplo Token
+              run: |
+                echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
+
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Duplo Setup
+              uses: duplocloud/actions/setup@v0.0.5
+
+            - name: Build and Push Docker Image
+              uses: duplocloud/actions/build-image@v0.0.5
+              id: build-and-push-demo
+              with:
+                repo: ${{ env.SERVICE_NAME }}
+                platforms: linux/amd64
+                Dockerfile: dummy-frontend/Dockerfile
+                push: true
+                context: dummy-frontend
+                cache: false
+                extra-tags: ${{ github.sha }}
+
+        outputs:
+            demo_image: '${{ steps.build-and-push-demo.outputs.image }}:${{ github.sha }}'
