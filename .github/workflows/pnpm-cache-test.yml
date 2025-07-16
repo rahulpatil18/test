@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      
+      - name: Enable Docker BuildKit for cache
+        run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
       - name: Retrieve Duplo Token
         run: echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
