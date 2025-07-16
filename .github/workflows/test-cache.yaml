@@ -30,7 +30,7 @@ jobs:
                 Dockerfile: dummy-frontend/Dockerfile
                 push: true
                 context: dummy-frontend
-                cache: false
+                cache: true
                 extra-tags: ${{ github.sha }}
 
         outputs:
