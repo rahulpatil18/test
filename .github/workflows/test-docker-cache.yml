@@ -9,7 +9,7 @@ env:
     DUPLO_TENANT: demo
 jobs:
     build:
-        runs-on: blacksmith-4vcpu-ubuntu-2204
+        runs-on: ubuntu-latest
         steps:
             - name: Retrieve Duplo Token
               run: |
