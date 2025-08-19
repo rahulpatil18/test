@@ -1,0 +1,50 @@
+name: Test docker Cache on web(demo)
+on: 
+  workflow_dispatch:
+
+env:
+    DUPLO_HOST: https://qa-aws.duplocloud.net
+    DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+    SERVICE_NAME: web
+    DUPLO_TENANT: demo
+jobs:
+    build:
+        runs-on: blacksmith-4vcpu-ubuntu-2204
+        steps:
+            - name: Retrieve Duplo Token
+              run: |
+                echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
+            
+            - name: Enable Docker BuildKit for cache
+              run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+
+            - name: Checkout code
+              uses: actions/checkout@v3
+       
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Get AWS credentials
+              uses: duplocloud/ghactions-aws-jit@master
+              with:
+                tenant: ${{ env.DUPLO_TENANT }}
+      
+            - name: Login to Amazon ECR
+              id: login-ecr
+              uses: aws-actions/amazon-ecr-login@v2
+              with:
+                mask-password: true
+
+            - name: Build and Push Docker Image
+              id: build-and-push-connect
+              uses: docker/build-push-action@v5
+              with:
+                context: dummy-frontend
+                file: dummy-frontend/Dockerfile
+                push: true
+                platforms: linux/amd64
+                cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.SERVICE_NAME }}:${{ github.head_ref || github.ref_name }}
+                cache-to: type=inline
+
+        outputs:
+            demo_image: '${{ steps.build-and-push-demo.outputs.image }}:${{ github.sha }}'
