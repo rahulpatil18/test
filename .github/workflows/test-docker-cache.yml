@@ -24,10 +24,13 @@ jobs:
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
-            - name: Get AWS credentials
+            - name: aws-jit
               uses: duplocloud/ghactions-aws-jit@master
               with:
-                tenant: ${{ env.DUPLO_TENANT }}
+                duplo_host: ${{ env.DUPLO_HOST }}
+                duplo_token: ${{ secrets.DUPLO_TOKEN }}
+                tenant: default
+
       
             - name: Login to Amazon ECR
               id: login-ecr
