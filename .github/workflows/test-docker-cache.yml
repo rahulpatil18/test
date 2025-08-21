@@ -45,8 +45,9 @@ jobs:
                 file: dummy-frontend/Dockerfile
                 push: true
                 platforms: linux/amd64
-                cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.SERVICE_NAME }}:${{ github.head_ref || github.ref_name }}
-                cache-to: type=inline
+                tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+                cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.SERVICE_NAME }}:cache
+                cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/${{ env.SERVICE_NAME }}:cache,mode=max
 
         outputs:
-            demo_image: '${{ steps.build-and-push-demo.outputs.image }}:${{ github.sha }}'
+          demo_image: '${{ steps.build-and-push-connect.outputs.tags }}'
