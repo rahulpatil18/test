@@ -29,8 +29,7 @@ jobs:
               with:
                 duplo_host: ${{ env.DUPLO_HOST }}
                 duplo_token: ${{ secrets.DUPLO_TOKEN }}
-                tenant: default
-
+                tenant: demo
       
             - name: Login to Amazon ECR
               id: login-ecr
