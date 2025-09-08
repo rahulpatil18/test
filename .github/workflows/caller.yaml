@@ -1,4 +1,4 @@
-name: "Test Init + Build"
+name: Caller Workflow
 
 on:
   workflow_dispatch:
@@ -7,16 +7,11 @@ jobs:
   call-init:
     uses: ./.github/workflows/init.yaml
     with:
-      docker_image_name: my-test-image
       customer_name: testcustomer
-    outputs:
-      environment: ${{ steps.init_job.outputs.environment }}
-      sha_short: ${{ steps.init_job.outputs.sha_short }}
-      run_deployment: ${{ steps.init_job.outputs.run_deployment }}
-      docker_image_name: ${{ steps.init_job.outputs.docker_image_name }}
+      docker_image_name: my-test-image
 
   build:
-    needs: [call-init]
+    needs: call-init
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs from init
