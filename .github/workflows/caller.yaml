@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-init:
+  init:
     uses: ./.github/workflows/init.yaml
     with:
       customer_name: testcustomer
       docker_image_name: my-test-image
 
   build:
-    needs: call-init
+    needs: init
     runs-on: ubuntu-latest
     steps:
       - name: Print outputs from init
         run: |
-          echo "Environment: ${{ needs.call-init.outputs.environment }}"
-          echo "SHA short: ${{ needs.call-init.outputs.sha_short }}"
-          echo "Run deployment: ${{ needs.call-init.outputs.run_deployment }}"
-          echo "Docker image name: ${{ needs.call-init.outputs.docker_image_name }}"
+          echo "Environment: ${{ needs.init.outputs.environment }}"
+          echo "SHA short: ${{ needs.init.outputs.sha_short }}"
+          echo "Run deployment: ${{ needs.init.outputs.run_deployment }}"
+          echo "Docker image name: ${{ needs.init.outputs.docker_image_name }}"

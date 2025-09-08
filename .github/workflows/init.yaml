@@ -22,19 +22,15 @@ jobs:
       - name: Set variables
         id: setVars
         run: |
-          if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
-            env_name="prod"
-          else
-            env_name="dev01"
-          fi
+          
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             deploy="false"
           else
             deploy="true"
           fi
-          sha_short=$(git rev-parse --short "$GITHUB_SHA")
+          sha_short=abc
 
-          echo "environment=$env_name" >> "$GITHUB_OUTPUT"
+          echo "environment=abcd" >> "$GITHUB_OUTPUT"
           echo "sha_short=$sha_short" >> "$GITHUB_OUTPUT"
           echo "run_deployment=$deploy" >> "$GITHUB_OUTPUT"
 
