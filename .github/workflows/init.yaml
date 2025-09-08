@@ -32,7 +32,7 @@ jobs:
           else
             deploy="true"
           fi
-          sha_short=$(git rev-parse --short "$GITHUB_SHA")
+          sha_short=abc
 
           echo "environment=$env_name" >> "$GITHUB_OUTPUT"
           echo "sha_short=$sha_short" >> "$GITHUB_OUTPUT"
