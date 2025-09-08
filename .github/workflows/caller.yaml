@@ -9,6 +9,11 @@ jobs:
     with:
       docker_image_name: my-test-image
       customer_name: testcustomer
+    outputs:
+      environment: ${{ steps.init_job.outputs.environment }}
+      sha_short: ${{ steps.init_job.outputs.sha_short }}
+      run_deployment: ${{ steps.init_job.outputs.run_deployment }}
+      docker_image_name: ${{ steps.init_job.outputs.docker_image_name }}
 
   build:
     needs: [call-init]
@@ -20,7 +25,3 @@ jobs:
           echo "SHA short: ${{ needs.call-init.outputs.sha_short }}"
           echo "Run deployment: ${{ needs.call-init.outputs.run_deployment }}"
           echo "Docker image name: ${{ needs.call-init.outputs.docker_image_name }}"
-
-      - name: Conditional Docker login
-        if: ${{ needs.call-init.outputs.run_deployment == 'true' }}
-        run: echo "Would login to Docker registry here for ${{ needs.call-init.outputs.docker_image_name }}"
