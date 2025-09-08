@@ -1,0 +1,57 @@
+name: "Init Workflow"
+
+on:
+  workflow_call:
+    inputs:
+      customer_name:
+        description: "Customer name for production"
+        required: false
+        type: string
+      docker_image_name:
+        description: "Docker image name"
+        required: true
+        type: string
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.setVars.outputs.environment }}
+      sha_short: ${{ steps.extractBranch.outputs.sha_short }}
+      run_deployment: ${{ steps.setVars.outputs.run_deployment }}
+      docker_image_name: ${{ inputs.docker_image_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - id: setVars
+        name: Define Environment
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME"
+
+          if [[ $GITHUB_REF == 'refs/heads/main' ]]; then
+            env_name="prod"
+          else
+            env_name="dev01"
+          fi
+
+          # run_deployment true unless pull_request
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            deploy="false"
+          else
+            deploy="true"
+          fi
+
+          echo "environment=$env_name" >> "$GITHUB_OUTPUT"
+          echo "run_deployment=$deploy" >> "$GITHUB_OUTPUT"
+
+      - id: extractBranch
+        name: Extract SHA
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            sha_short=$(git rev-parse --short "${{ github.event.pull_request.head.sha }}")
+          else
+            sha_short=$(git rev-parse --short "$GITHUB_SHA")
+          fi
+          echo "sha_short=$sha_short" >> "$GITHUB_OUTPUT"
