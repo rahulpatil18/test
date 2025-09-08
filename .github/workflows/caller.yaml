@@ -1,0 +1,26 @@
+name: "Test Init + Build"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-init:
+    uses: ./.github/workflows/init.yaml
+    with:
+      docker_image_name: my-test-image
+      customer_name: testcustomer
+
+  build:
+    needs: [call-init]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print outputs from init
+        run: |
+          echo "Environment: ${{ needs.call-init.outputs.environment }}"
+          echo "SHA short: ${{ needs.call-init.outputs.sha_short }}"
+          echo "Run deployment: ${{ needs.call-init.outputs.run_deployment }}"
+          echo "Docker image name: ${{ needs.call-init.outputs.docker_image_name }}"
+
+      - name: Conditional Docker login
+        if: ${{ needs.call-init.outputs.run_deployment == 'true' }}
+        run: echo "Would login to Docker registry here for ${{ needs.call-init.outputs.docker_image_name }}"
