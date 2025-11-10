@@ -1,0 +1,11 @@
+name: Test env variable
+on:
+  workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: TEST_VAR variable value
+              run: |
+                echo "TEST_VAR=${{ env.TEST_VAR }}"
