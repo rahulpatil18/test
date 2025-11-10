@@ -9,4 +9,4 @@ jobs:
         steps:
             - name: TEST_VAR variable value
               run: |
-                echo "TEST_VAR=${{ env.TEST_VAR }}"
+                echo "TEST_VAR=${{ vars.TEST_VAR }}"
