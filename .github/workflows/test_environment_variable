@@ -5,6 +5,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        environment: development
         steps:
             - name: TEST_VAR variable value
               run: |
