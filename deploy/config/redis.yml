@@ -1,0 +1,23 @@
+Name: redis
+DockerImage: redis:7.2
+Replicas: 1
+Cloud: 0
+IsLBSyncedDeployment: false
+AgentPlatform: 7
+OtherDockerConfig: |
+  {
+    "Env": [
+      "TZ=UTC"
+    ]
+  }
+OtherDockerHostConfig: |
+  {
+    "PortBindings": {
+      "6379/tcp": [
+        {
+          "HostPort": "6379"
+        }
+      ]
+    }
+  }
+NetworkId: default
