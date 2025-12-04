@@ -63,9 +63,9 @@ jobs:
               run: |
                 echo "Using image: nginx:latest"
         
-                sed -i "s|{{IMAGE}}|nginx:latest|g" test/deploy/config/event-temple-service.yaml
+                sed -i "s|{{IMAGE}}|nginx:latest|g" deploy/config/event-temple-service.yaml
                 
                 duploctl service create \
                   --tenant $DUPLO_TENANT \
-                  --file test/deploy/config/event-temple-service.yaml \
+                  --file deploy/config/event-temple-service.yaml \
                   --wait
