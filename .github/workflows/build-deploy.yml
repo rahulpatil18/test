@@ -62,7 +62,7 @@ jobs:
             - name: Deploy Redis
               run: |
                 duploctl service create --file deploy/config/redis.yaml --wait
-                duploctl ingress create --file redis-lb.yaml --wait
+                duploctl ingress create --file deploy/config/redis-lb.yaml --wait
 
 
             # - name: Create preview service in Duplo
