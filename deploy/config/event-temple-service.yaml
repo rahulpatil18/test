@@ -4,6 +4,9 @@ Replicas: 1
 Cloud: 0
 IsLBSyncedDeployment: true
 AgentPlatform: 7
+env:
+  - name: REDIS
+    value: preview-redis
 OtherDockerConfig: |
   {
     "EnvFrom": [
@@ -11,7 +14,9 @@ OtherDockerConfig: |
         "secretRef": {
           "name": "preview-eventtemple"
         }
-      }
+      },
+      "Env": [
+      { "name": "REDIS", "value": "preview-redis" }
     ],
     "Command": [
       "bin/start-nginx",
