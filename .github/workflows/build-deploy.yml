@@ -61,7 +61,7 @@ jobs:
 
             - name: Deploy Redis
               run: |
-                duploctl service create --file redis.yaml --wait
+                duploctl service create --file deploy/config/redis.yaml --wait
 
             - name: Create preview service in Duplo
               run: |
