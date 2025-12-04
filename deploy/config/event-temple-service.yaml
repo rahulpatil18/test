@@ -4,15 +4,22 @@ Replicas: 1
 Cloud: 0
 IsLBSyncedDeployment: true
 AgentPlatform: 7
-otherPodConfig:
-  envFrom:
-    - secretRef:
-        name: eventtemple
-  command:
-    - bin/start-nginx
-    - bundle
-    - exec
-    - puma
-    - -C
-    - config/puma.rb
+OtherDockerConfig: |
+  {
+    "EnvFrom": [
+      {
+        "secretRef": {
+          "name": "eventtemple"
+        }
+      }
+    ],
+    "Cmd": [
+      "bin/start-nginx",
+      "bundle",
+      "exec",
+      "puma",
+      "-C",
+      "config/puma.rb"
+    ]
+  }
 NetworkId: default
