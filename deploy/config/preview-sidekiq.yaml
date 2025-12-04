@@ -13,6 +13,9 @@ OtherDockerConfig: |
         }
       }
     ],
+    "Env": [
+      { "name": "REDIS", "value": "preview-redis" }
+    ],
     "Command": [
       "bin/sidekiq",
       "-C",
