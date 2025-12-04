@@ -9,7 +9,7 @@ OtherDockerConfig: |
     "EnvFrom": [
       {
         "secretRef": {
-          "name": "eventtemple"
+          "name": "preview-eventtemple"
         }
       }
     ],
