@@ -1,4 +1,4 @@
-Name: eventtemple
+Name: preview-eventtemple
 DockerImage: "{{IMAGE}}"
 Replicas: 1
 Cloud: 0
