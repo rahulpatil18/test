@@ -4,9 +4,7 @@ Replicas: 1
 Cloud: 0
 IsLBSyncedDeployment: true
 AgentPlatform: 7
-env:
-  - name: REDIS
-    value: preview-redis
+
 OtherDockerConfig: |
   {
     "EnvFrom": [
@@ -14,11 +12,12 @@ OtherDockerConfig: |
         "secretRef": {
           "name": "preview-eventtemple"
         }
-      },
-      "Env": [
+      }
+    ],
+    "Env": [
       { "name": "REDIS", "value": "preview-redis" }
     ],
-    "Command": [
+    "Cmd": [
       "bin/start-nginx",
       "bundle",
       "exec",
@@ -27,4 +26,5 @@ OtherDockerConfig: |
       "config/puma.rb"
     ]
   }
+
 NetworkId: default
