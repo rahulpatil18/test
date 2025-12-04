@@ -53,6 +53,9 @@ jobs:
               run: |
                 echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
 
+            - name: Checkout code
+              uses: actions/checkout@v3
+
             - name: Duplo Setup
               uses: duplocloud/actions/setup@v0.0.10
 
