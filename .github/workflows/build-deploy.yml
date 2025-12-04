@@ -62,34 +62,36 @@ jobs:
             - name: Deploy Redis
               run: |
                 duploctl service create --file deploy/config/redis.yaml --wait
+                duploctl load-balancer create --file redis-lb.yaml --wait
 
-            - name: Create preview service in Duplo
-              run: |
-                echo "Using image: nginx:latest"
+
+            # - name: Create preview service in Duplo
+            #   run: |
+            #     echo "Using image: nginx:latest"
         
-                sed -i "s|{{IMAGE}}|nginx:latest|g" deploy/config/event-temple-service.yaml \
-                              deploy/config/preview-bulk-processing.yaml \
-                              deploy/config/preview-dynamo.yaml \
-                              deploy/config/preview-sidekiq.yaml
+            #     sed -i "s|{{IMAGE}}|nginx:latest|g" deploy/config/event-temple-service.yaml \
+            #                   deploy/config/preview-bulk-processing.yaml \
+            #                   deploy/config/preview-dynamo.yaml \
+            #                   deploy/config/preview-sidekiq.yaml
                 
-                duploctl service create \
-                  --tenant $DUPLO_TENANT \
-                  --file deploy/config/event-temple-service.yaml \
-                  --wait
+            #     duploctl service create \
+            #       --tenant $DUPLO_TENANT \
+            #       --file deploy/config/event-temple-service.yaml \
+            #       --wait
                   
                 
-                duploctl service create \
-                  --tenant $DUPLO_TENANT \
-                  --file deploy/config/preview-bulk-processing.yaml \
-                  --wait
+            #     duploctl service create \
+            #       --tenant $DUPLO_TENANT \
+            #       --file deploy/config/preview-bulk-processing.yaml \
+            #       --wait
                                   
-                duploctl service create \
-                  --tenant $DUPLO_TENANT \
-                  --file deploy/config/preview-dynamo.yaml \
-                  --wait
+            #     duploctl service create \
+            #       --tenant $DUPLO_TENANT \
+            #       --file deploy/config/preview-dynamo.yaml \
+            #       --wait
                                   
-                duploctl service create \
-                  --tenant $DUPLO_TENANT \
-                  --file deploy/config/preview-sidekiq.yaml \
-                  --wait
+            #     duploctl service create \
+            #       --tenant $DUPLO_TENANT \
+            #       --file deploy/config/preview-sidekiq.yaml \
+            #       --wait
                   
