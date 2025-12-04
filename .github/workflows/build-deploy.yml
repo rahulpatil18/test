@@ -59,6 +59,10 @@ jobs:
             - name: Duplo Setup
               uses: duplocloud/actions/setup@v0.0.10
 
+            - name: Deploy Redis
+              run: |
+                duploctl service create --file redis.yaml --wait
+
             - name: Create preview service in Duplo
               run: |
                 echo "Using image: nginx:latest"
