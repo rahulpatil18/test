@@ -1,0 +1,24 @@
+Name: preview-bulk-processing
+DockerImage: "{{IMAGE}}"
+Replicas: 1
+Cloud: 0
+IsLBSyncedDeployment: true
+AgentPlatform: 7
+OtherDockerConfig: |
+  {
+    "EnvFrom": [
+      {
+        "secretRef": {
+          "name": "preview-eventtemple"
+        }
+      }
+    ],
+    "Command": [
+      "bin/sideki",
+      "-q",
+      "bulk_processing",
+      "-q",
+      "high"
+    ]
+  }
+NetworkId: default
