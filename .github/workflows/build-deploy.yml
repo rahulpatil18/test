@@ -1,4 +1,4 @@
-name: Test build-args
+name: Deploy Preview-eventtemple
 on:
   workflow_dispatch:
 
