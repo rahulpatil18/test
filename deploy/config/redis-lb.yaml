@@ -1,0 +1,14 @@
+Name: redis
+Tenant: stage
+HealthCheckConfig:
+  HealthyThresholdCount: 3
+  UnhealthyThresholdCount: 3
+  HealthCheckIntervalSec: 10
+  HealthCheckTimeoutSec: 5
+  Protocol: TCP
+  Port: 6379
+Listeners:
+  - Protocol: TCP
+    Port: 6379
+    TargetPort: 6379
+IsNative: false
