@@ -42,24 +42,21 @@ jobs:
         # needs: build
         runs-on: ubuntu-latest
         steps:
-            - name: Debug paths
-              run: |
-                echo "PWD:"
-                pwd
-                echo "Files:"
-                find . -maxdepth 4 -type f
-              
             - name: Retrieve Duplo Token
               run: |
                 echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
 
             - name: Checkout code
               uses: actions/checkout@v3
-
+              
+            - name: Debug paths
+              run: |
+                echo "PWD:"
+                pwd
+                echo "Files:"
+                find . -maxdepth 4 -type f
+                
             - name: Duplo Setup
-              uses: duplocloud/actions/setup@v0.0.10
-
-            - name: Create preview eventtemple service
               uses: duplocloud/actions/setup@v0.0.10
 
             - name: Create preview-eventtemple service in Duplo
