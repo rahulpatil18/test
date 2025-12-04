@@ -42,6 +42,13 @@ jobs:
         # needs: build
         runs-on: ubuntu-latest
         steps:
+            - name: Debug paths
+              run: |
+                echo "PWD:"
+                pwd
+                echo "Files:"
+                find . -maxdepth 4 -type f
+              
             - name: Retrieve Duplo Token
               run: |
                 echo "DUPLO_TOKEN=${{ secrets.DUPLO_TOKEN }}" >> $GITHUB_ENV
