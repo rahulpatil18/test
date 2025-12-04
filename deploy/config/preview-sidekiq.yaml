@@ -1,0 +1,22 @@
+Name: preview-sidekiq
+DockerImage: "{{IMAGE}}"
+Replicas: 1
+Cloud: 0
+IsLBSyncedDeployment: true
+AgentPlatform: 7
+OtherDockerConfig: |
+  {
+    "EnvFrom": [
+      {
+        "secretRef": {
+          "name": "preview-eventtemple"
+        }
+      }
+    ],
+    "Command": [
+      "bin/sidekiq",
+      "-C",
+      "config/sidekiq.yml"
+    ]
+  }
+NetworkId: default
