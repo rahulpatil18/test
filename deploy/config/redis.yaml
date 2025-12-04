@@ -1,4 +1,4 @@
-Name: redis
+Name: preview-redis
 DockerImage: redis:7.2
 Replicas: 1
 Cloud: 0
