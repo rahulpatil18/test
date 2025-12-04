@@ -1,14 +1,15 @@
-Name: redis
+Name: preview-redis-lb
 Tenant: stage
-HealthCheckConfig:
-  HealthyThresholdCount: 3
-  UnhealthyThresholdCount: 3
-  HealthCheckIntervalSec: 10
-  HealthCheckTimeoutSec: 5
-  Protocol: TCP
-  Port: 6379
-Listeners:
-  - Protocol: TCP
-    Port: 6379
-    TargetPort: 6379
+Protocol: tcp
+Port: 6379
+TargetPort: 6379
 IsNative: false
+HealthCheck:
+  Protocol: tcp
+  Port: 6379
+  Interval: 10
+  Timeout: 5
+  HealthyThreshold: 3
+  UnhealthyThreshold: 3
+Services:
+  - preview-redis
