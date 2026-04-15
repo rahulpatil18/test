@@ -14,30 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup DuploCloud (default — no version pin)
+      - name: Setup DuploCloud
         uses: duplocloud/actions@v0.0.14
-        continue-on-error: true  # portal config will fail without real creds; we only care about what pip installs
-
-      - name: Check version installed by default
-        run: |
-          echo "=== Default (v0.0.14 tag default) ==="
-          pip show duplocloud-client | grep Version
-
-      - name: Setup DuploCloud (explicit version pin)
-        uses: duplocloud/actions@v0.0.14
-        continue-on-error: true
+        continue-on-error: true  # portal config fails without real creds; we only care about what pip installs
         with:
           version: ${{ inputs.duploctl-version }}
 
-      - name: Check version installed with explicit pin
-        run: |
-          echo "=== Pinned (${{ inputs.duploctl-version }}) ==="
-          pip show duplocloud-client | grep Version
-
-      - name: Assert pinned version matches expected
+      - name: Assert version matches expected
         run: |
           INSTALLED=$(pip show duplocloud-client | grep Version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           EXPECTED="${{ inputs.duploctl-version }}"
+          echo "Installed: ${INSTALLED}"
+          echo "Expected:  ${EXPECTED}"
           if [ "$INSTALLED" != "$EXPECTED" ]; then
             echo "::error::Version mismatch — expected ${EXPECTED}, got ${INSTALLED}"
             exit 1
