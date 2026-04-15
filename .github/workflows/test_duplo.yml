@@ -8,10 +8,6 @@ on:
         required: false
         default: "0.4.3"
 
-env:
-  DUPLO_HOST: ${{ vars.DUPLO_HOST }}
-  DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
-
 jobs:
   test-version:
     name: Verify duploctl Version
@@ -19,31 +15,28 @@ jobs:
 
     steps:
       - name: Setup DuploCloud (default — no version pin)
-        id: setup-default
         uses: duplocloud/actions@v0.0.14
-        with:
-          mask-account-id: "false"
+        continue-on-error: true  # portal config will fail without real creds; we only care about what pip installs
 
       - name: Check version installed by default
         run: |
           echo "=== Default (v0.0.14 tag default) ==="
-          duploctl --version
+          pip show duplocloud-client | grep Version
 
       - name: Setup DuploCloud (explicit version pin)
-        id: setup-pinned
         uses: duplocloud/actions@v0.0.14
+        continue-on-error: true
         with:
-          mask-account-id: "false"
           version: ${{ inputs.duploctl-version }}
 
       - name: Check version installed with explicit pin
         run: |
           echo "=== Pinned (${{ inputs.duploctl-version }}) ==="
-          duploctl --version
+          pip show duplocloud-client | grep Version
 
-      - name: Assert version matches expected
+      - name: Assert pinned version matches expected
         run: |
-          INSTALLED=$(duploctl --version 2>&1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          INSTALLED=$(pip show duplocloud-client | grep Version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           EXPECTED="${{ inputs.duploctl-version }}"
           if [ "$INSTALLED" != "$EXPECTED" ]; then
             echo "::error::Version mismatch — expected ${EXPECTED}, got ${INSTALLED}"
