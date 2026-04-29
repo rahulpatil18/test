@@ -1,0 +1,33 @@
+on:
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: 'Simulate a deployment failure? (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulate Deployment
+        run: |
+          if [ "${{ github.event.inputs.simulate_failure }}" = "true" ]; then
+            echo "Simulating failure..."
+            exit 1
+          fi
+          echo "Simulating successful deployment..."
+
+      - name: Notify successful deployment
+        if: success()
+        run: |
+          curl -X POST -H "Content-type: application/json" \
+            -d '{"text": "Test: Deployment completed successfully! :white_check_mark:"}' \
+            ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+
+      - name: Notify failed deployment
+        if: failure()
+        run: |
+          curl -X POST -H "Content-type: application/json" \
+            -d '{"text": "Test: Deployment failed! :x:"}' \
+            ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
