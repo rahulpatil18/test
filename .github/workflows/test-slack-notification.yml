@@ -1,3 +1,5 @@
+name: Test Slack Notification
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,14 +22,30 @@ jobs:
 
       - name: Notify successful deployment
         if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+          ACTOR: ${{ github.actor }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          SHORT_SHA="${SHA:0:7}"
           curl -X POST -H "Content-type: application/json" \
-            -d '{"text": "Test: Deployment completed successfully! :white_check_mark:"}' \
-            ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+            --data '{"text": "✅ *Test deployment completed successfully.*
+Branch: `'"${BRANCH}"'` | Commit: `'"${SHORT_SHA}"'` | By: '"${ACTOR}"' | Run: '"${RUN_URL}"'"}' \
+            "$SLACK_WEBHOOK"
 
       - name: Notify failed deployment
         if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+          ACTOR: ${{ github.actor }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          SHORT_SHA="${SHA:0:7}"
           curl -X POST -H "Content-type: application/json" \
-            -d '{"text": "Test: Deployment failed! :x:"}' \
-            ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+            --data '{"text": "❌ *Test deployment failed.*
+Branch: `'"${BRANCH}"'` | Commit: `'"${SHORT_SHA}"'` | By: '"${ACTOR}"' | Run: '"${RUN_URL}"'"}' \
+            "$SLACK_WEBHOOK"
