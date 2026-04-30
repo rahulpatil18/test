@@ -1,4 +1,4 @@
-name: Test Slack Notification
+name: "Prod Backend & Admin Portal Deploy"
 
 on:
   workflow_dispatch:
@@ -31,6 +31,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
           channel: '#deploy-test'
-          name: 'Prod Backend & Admin Portal'
+          name: 'Deployment Bot'
           include_commit_message: true
           icon_emoji: ':rocket:'
