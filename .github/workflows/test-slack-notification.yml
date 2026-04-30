@@ -31,6 +31,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           slack_webhook_url: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
           channel: '#deploy-test'
-          name: 'Deployment Bot'
+          name: 'Prod Backend & Admin Portal'
           include_commit_message: true
-          icon_emoji: ':ship:'
+          icon_emoji: ':rocket:'
