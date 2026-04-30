@@ -20,30 +20,17 @@ jobs:
           fi
           echo "Simulating successful deployment..."
 
-      - name: Notify successful deployment
-        if: success()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
-          ACTOR: ${{ github.actor }}
-          BRANCH: ${{ github.ref_name }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          SHORT_SHA="${SHA:0:7}"
-          curl -X POST -H "Content-type: application/json" \
-            --data "{\"text\":\"✅ *Test deployment completed successfully.*\nBranch: ${BRANCH} | Commit: ${SHORT_SHA} | By: ${ACTOR} | Run: ${RUN_URL}\"}" \
-            "${SLACK_WEBHOOK}"
-
-      - name: Notify failed deployment
-        if: failure()
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
-          ACTOR: ${{ github.actor }}
-          BRANCH: ${{ github.ref_name }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          SHORT_SHA="${SHA:0:7}"
-          curl -X POST -H "Content-type: application/json" \
-            --data "{\"text\":\"❌ *Test deployment failed.*\nBranch: ${BRANCH} | Commit: ${SHORT_SHA} | By: ${ACTOR} | Run: ${RUN_URL}\"}" \
-            "${SLACK_WEBHOOK}"
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send Slack Notification
+        uses: Gamesight/slack-workflow-status@68bf00d0dbdbcb206c278399aa1ef6c14f74347a
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
+          channel: '#deploy-test'
+          name: 'Deployment Bot'
+          include_commit_message: true
+          icon_emoji: ':ship:'
